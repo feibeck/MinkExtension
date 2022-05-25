@@ -68,10 +68,14 @@ class GoutteFactory implements DriverFactory
             );
         }
 
+        if ($this->isGuzzle6()) {
+            $clientDefinition = new Definition('Behat\Mink\Driver\Goutte\Client');
+
+            return new Definition('Behat\Mink\Driver\GoutteDriver', array($clientDefinition));
+        }
+        
         if ($this->isGoutte1()) {
             $guzzleClient = $this->buildGuzzle3Client($config['guzzle_parameters']);
-        } elseif ($this->isGuzzle6()) {
-            $guzzleClient = $this->buildGuzzle6Client($config['guzzle_parameters']);
         } else {
             $guzzleClient = $this->buildGuzzle4Client($config['guzzle_parameters']);
         }
@@ -126,6 +130,6 @@ class GoutteFactory implements DriverFactory
     private function isGuzzle6()
     {
         return interface_exists('GuzzleHttp\ClientInterface') &&
-            version_compare(\GuzzleHttp\ClientInterface::VERSION, '6.0.0', '>=');
+            version_compare(\GuzzleHttp\ClientInterface::MAJOR_VERSION, '6.0.0', '>=');
     }
 }
